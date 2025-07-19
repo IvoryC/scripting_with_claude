@@ -1,0 +1,51 @@
+TEST SCRIPT STYLE GUIDE
+========================
+
+Use this style for creating comprehensive bash test scripts:
+
+VISUAL FORMATTING:
+- Use ANSI color codes for output:
+  * RED='\033[0;31m' for failures/errors
+  * GREEN='\033[0;32m' for success
+  * YELLOW='\033[1;33m' for commands and section headers
+  * BLUE='\033[0;34m' for test headers
+  * NC='\033[0m' for no color (reset)
+
+STRUCTURE:
+- Each test should have a clear numbered header with description
+- Show the exact command being run in yellow before execution
+- Display clear PASSED ✓ or FAILED ✗ results
+- Provide detailed verification of expected vs actual results
+- Include a summary at the end with total counts and emoji
+
+FUNCTIONS TO INCLUDE:
+1. print_test() - Blue header with test number and description
+2. run_command() - Yellow command display + execution
+3. check_result() - Green/red pass/fail with symbols
+4. Helper functions for file verification and content checking
+
+COMMAND DISPLAY:
+- Always show the exact command in yellow before running
+- Format commands so they can be copy-pasted for manual testing
+- Use proper quoting for paths and variables
+
+TEST PATTERNS:
+- Test basic functionality first
+- Test edge cases and error conditions
+- Test different parameter combinations
+- Verify file formats and content
+- Test integration scenarios
+
+SUMMARY SECTION:
+- Show total tests run vs passed
+- Calculate and show failed count
+- Use green "All tests passed! 🎉" or red "Some tests failed. 😞"
+- Exit with appropriate return codes (0 for success, 1 for failure)
+
+VERIFICATION:
+- Count expected vs actual results (sequences, files, etc.)
+- Check file existence and content
+- Verify specific format requirements
+- Show sample output when helpful for debugging
+
+The goal is clear, visual feedback with enough detail to debug failures quickly and commands that can be easily re-run manually.

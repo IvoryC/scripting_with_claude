@@ -1,0 +1,8 @@
+main_folder/
+├── script/
+│   └── genome-chop.py          # Main Python script
+└── test/
+    ├── input/
+    │   └── test_genome.fa       # Test FASTA input file
+    ├── output/                  # Generated test outputs
+    └── test_features.sh         # Bash test script with visual feedback
