@@ -1,0 +1,11 @@
+sample_id	ladybug	grasshopper	cricket	beetle	ant	butterfly	dragonfly	bee	wasp	moth	fly	mosquito	termite	aphid	caterpillar	spider	tick	flea	mite	cockroach	praying_mantis	cicada	firefly	weevil	thrips
+field_sample_01	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	9950	0	0	0	0	50
+field_sample_02	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	9999	1
+field_sample_03	8500	1500	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+field_sample_04	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+field_sample_05	3000	2000	2000	2000	1000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+field_sample_06	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	10000
+field_sample_07	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100	100
+field_sample_08	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1
+field_sample_09	5000	3000	2000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+field_sample_10	9999	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1

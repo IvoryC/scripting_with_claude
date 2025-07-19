@@ -1,0 +1,11 @@
+	ladybug	cockroach	weevil	thrips
+field_sample_01	NA	1	NA	NA
+field_sample_02	NA	NA	1	NA
+field_sample_03	0.8	NA	NA	NA
+field_sample_04	NA	NA	NA	NA
+field_sample_05	NA	NA	NA	NA
+field_sample_06	NA	NA	NA	1
+field_sample_07	NA	NA	NA	NA
+field_sample_08	NA	NA	NA	1
+field_sample_09	0.5	NA	NA	NA
+field_sample_10	1	NA	NA	NA
