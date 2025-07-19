@@ -1,0 +1,47 @@
+usage: genome-chop.py [-h] -i INPUT_FILE -c CHUNK_SIZE -s SLIDE_BP
+                      [-n MAX_SEQUENCES] [-o OUTPUT] [-z] [-v]
+
+Chop genome sequences into overlapping chunks
+
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_FILE, --input-file INPUT_FILE
+                        Input FASTA file path
+  -c CHUNK_SIZE, --chunk-size CHUNK_SIZE
+                        Size of each chunk (in bases)
+  -s SLIDE_BP, --slide-bp SLIDE_BP
+                        Step size between chunks (in bases). Use 0 for random
+                        mode
+  -n MAX_SEQUENCES, --max-sequences MAX_SEQUENCES
+                        Maximum number of output sequences to produce
+  -o OUTPUT, --output OUTPUT
+                        Output FASTQ file or directory. If directory (ends
+                        with /), uses default filename. Default:
+                        input_name_chopped.fastq in input directory
+  -z, --gzip            Compress output with gzip (.gz extension added
+                        automatically)
+  -v, --version         show program's version number and exit
+
+Examples:
+  genome-chop.py -i input.fa -c 100 -s 50                       # 100bp chunks, 50bp steps
+  genome-chop.py -i input.fa -c 75 -s 25 -n 1000               # Limit to 1000 sequences
+  genome-chop.py -i input.fa -c 150 -s 0 -n 500                # Random mode: 500 random 150bp chunks
+  genome-chop.py -i input.fa -c 200 -s 100 -o results/         # Output to directory with default name
+  genome-chop.py -i input.fa -c 100 -s 50 -z                   # Gzip compressed output
+  genome-chop.py -i input.fa -c 100 -s 50 -o output/ -z        # Gzip output to directory
+  genome-chop.py --input-file genome.fa --chunk-size 200 --slide-bp 100  # Long form options
+
+Output Options:
+  -o filename.fastq    : Specific output filename
+  -o directory/        : Use default filename in specified directory
+  -z                   : Compress output with gzip (.gz extension added automatically)
+
+Modes:
+  Sliding window mode (slide-bp > 0): Creates overlapping chunks at regular intervals
+  Random mode (slide-bp = 0): Selects random start positions for chunks
+
+The script reads FASTA format files and outputs overlapping sequence chunks
+in FASTQ format with Illumina-style headers and high-quality base scores. 
+Each output sequence uses standard Illumina header format for compatibility
+with downstream tools like Kraken, BWA, etc.
+        
