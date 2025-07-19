@@ -1,0 +1,4 @@
+qiime2>=2023.2.0
+scikit-bio
+pandas
+numpy

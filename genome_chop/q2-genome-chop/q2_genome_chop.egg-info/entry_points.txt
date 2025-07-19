@@ -1,0 +1,2 @@
+[qiime2.plugins]
+q2-genome-chop = q2_genome_chop.plugin_setup:plugin

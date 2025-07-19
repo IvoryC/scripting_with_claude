@@ -1,0 +1,13 @@
+setup.py
+q2_genome_chop/__init__.py
+q2_genome_chop/_methods.py
+q2_genome_chop/_types.py
+q2_genome_chop/citations.bib
+q2_genome_chop/plugin_setup.py
+q2_genome_chop.egg-info/PKG-INFO
+q2_genome_chop.egg-info/SOURCES.txt
+q2_genome_chop.egg-info/dependency_links.txt
+q2_genome_chop.egg-info/entry_points.txt
+q2_genome_chop.egg-info/not-zip-safe
+q2_genome_chop.egg-info/requires.txt
+q2_genome_chop.egg-info/top_level.txt
