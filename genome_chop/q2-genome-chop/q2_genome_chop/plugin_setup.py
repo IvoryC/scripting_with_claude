@@ -16,8 +16,8 @@ citations = Citations.load('citations.bib', package='q2_genome_chop')
 # Create the plugin
 plugin = Plugin(
     name='genome-chop',
-    version='0.1.0',
-    website='https://github.com/yourusername/q2-genome-chop',
+    version='0.1.1',
+    website='https://github.com/IvoryC/scripting_with_claude',
     package='q2_genome_chop',
     description='A QIIME 2 plugin for chopping genome sequences into overlapping chunks',
     short_description='Chop genome sequences into overlapping chunks',
@@ -38,7 +38,7 @@ plugin.methods.register_function(
         'slide_bp': Int,
         'max_sequences': Int,
         'random_seed': Int,
-        'compress_output': Bool
+        'sample_name': Str
     },
     outputs=[
         ('chopped_sequences', SampleData[SequencesWithQuality])
@@ -51,7 +51,7 @@ plugin.methods.register_function(
         'slide_bp': 'Step size between chunks in base pairs. Use 0 for random mode',
         'max_sequences': 'Maximum number of output sequences to produce (optional)',
         'random_seed': 'Random seed for reproducible random mode (optional)',
-        'compress_output': 'Whether to compress output files with gzip'
+        'sample_name': 'Custom sample name for output. If not provided, generates descriptive name based on parameters (optional)'
     },
     output_descriptions={
         'chopped_sequences': 'Chopped sequences in FASTQ format with quality scores'

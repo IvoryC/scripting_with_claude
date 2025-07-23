@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="q2-genome-chop",
-    version="0.1.0",
+    version="0.1.1",
     description="QIIME 2 plugin for chopping genome sequences into overlapping chunks",
     author="Your Name",
     author_email="your.email@example.com",
-    url="https://github.com/yourusername/q2-genome-chop",
+    url="https://github.com/IvoryC/scripting_with_claude",
     packages=find_packages(),
     package_data={
         'q2_genome_chop': ['citations.bib'],

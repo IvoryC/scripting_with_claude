@@ -170,31 +170,27 @@ else
 fi
 check_result $RESULT
 
-# Test 6: Compressed output
-print_test "6" "Compressed output (gzip compression)"
-CMD="qiime genome-chop chop-sequences --i-sequences \"$OUTPUT_DIR/input_sequences.qza\" --p-chunk-size 60 --p-slide-bp 30 --p-max-sequences 5 --p-compress-output --o-chopped-sequences \"$OUTPUT_DIR/compressed.qza\""
+# Test 6: Random mode with different parameters and automatic naming
+print_test "6" "Random mode with automatic descriptive naming"
+CMD="qiime genome-chop chop-sequences --i-sequences \"$OUTPUT_DIR/input_sequences.qza\" --p-chunk-size 60 --p-slide-bp 0 --p-max-sequences 5 --o-chopped-sequences \"$OUTPUT_DIR/different_chunk.qza\""
 run_command "$CMD"
 RESULT=$?
-if [ $RESULT -eq 0 ] && check_qza_file "$OUTPUT_DIR/compressed.qza"; then
-    # Export and check if files are compressed
-    qiime tools export --input-path "$OUTPUT_DIR/compressed.qza" --output-path "$EXPORT_DIR/compressed" > /dev/null 2>&1
-    GZIP_FILES=$(find "$EXPORT_DIR/compressed" -name "*.fastq.gz" | wc -l)
-    echo "Found $GZIP_FILES gzipped FASTQ files"
-    if [ "$GZIP_FILES" -gt 0 ]; then
-        SEQ_COUNT=$(count_sequences_in_export "$EXPORT_DIR/compressed")
-        echo "Generated $SEQ_COUNT sequences in compressed format"
-        if [ "$SEQ_COUNT" -eq 5 ]; then
-            RESULT=0
-        else
-            echo "Expected 5 sequences, got $SEQ_COUNT"
-            RESULT=1
-        fi
+if [ $RESULT -eq 0 ] && check_qza_file "$OUTPUT_DIR/different_chunk.qza"; then
+    # Export and check results
+    qiime tools export --input-path "$OUTPUT_DIR/different_chunk.qza" --output-path "$EXPORT_DIR/different_chunk" > /dev/null 2>&1
+    SEQ_COUNT=$(count_sequences_in_export "$EXPORT_DIR/different_chunk")
+    
+    # Check that filename reflects the descriptive naming (should contain "random_chunks_c60_n5")
+    FASTQ_FILE=$(find "$EXPORT_DIR/different_chunk" -name "*.fastq.gz" | head -1)
+    if [[ "$FASTQ_FILE" == *"random_chunks_c60_n5"* ]]; then
+        echo "Generated $SEQ_COUNT sequences with descriptive naming: random_chunks_c60_n5"
+        RESULT=0
     else
-        echo "No compressed files found"
+        echo "Expected descriptive filename with 'random_chunks_c60_n5', got: $(basename "$FASTQ_FILE")"
         RESULT=1
     fi
 else
-    echo "Compressed output test failed"
+    echo "Different chunk test failed"
     RESULT=1
 fi
 check_result $RESULT
@@ -232,7 +228,32 @@ else
 fi
 check_result $RESULT
 
-# Test 8: Large chunk size (edge case)
+# Test 7: Custom sample name
+print_test "7" "Custom sample name parameter"
+CMD="qiime genome-chop chop-sequences --i-sequences \"$OUTPUT_DIR/input_sequences.qza\" --p-chunk-size 80 --p-slide-bp 40 --p-sample-name \"my_custom_sample\" --o-chopped-sequences \"$OUTPUT_DIR/custom_name.qza\""
+run_command "$CMD"
+RESULT=$?
+if [ $RESULT -eq 0 ] && check_qza_file "$OUTPUT_DIR/custom_name.qza"; then
+    # Export and check that custom name is used
+    qiime tools export --input-path "$OUTPUT_DIR/custom_name.qza" --output-path "$EXPORT_DIR/custom_name" > /dev/null 2>&1
+    
+    # Check that filename contains the custom sample name
+    FASTQ_FILE=$(find "$EXPORT_DIR/custom_name" -name "*.fastq.gz" | head -1)
+    if [[ "$FASTQ_FILE" == *"my_custom_sample"* ]]; then
+        SEQ_COUNT=$(count_sequences_in_export "$EXPORT_DIR/custom_name")
+        echo "Generated $SEQ_COUNT sequences with custom sample name: my_custom_sample"
+        RESULT=0
+    else
+        echo "Expected custom filename with 'my_custom_sample', got: $(basename "$FASTQ_FILE")"
+        RESULT=1
+    fi
+else
+    echo "Custom name test failed"
+    RESULT=1
+fi
+check_result $RESULT
+
+# Test 8: Edge case - chunk size larger than sequence (should produce no sequences)
 print_test "8" "Edge case: chunk size larger than sequence (should produce no sequences)"
 CMD="qiime genome-chop chop-sequences --i-sequences \"$OUTPUT_DIR/input_sequences.qza\" --p-chunk-size 400 --p-slide-bp 100 --o-chopped-sequences \"$OUTPUT_DIR/large_chunk.qza\""
 run_command "$CMD"
@@ -280,6 +301,7 @@ if [ $RESULT -eq 0 ] && check_qza_file "$OUTPUT_DIR/format_test.qza"; then
         # Check for Illumina-style format and quality scores
         if [[ "$FIRST_HEADER" == *"@SIM:"* ]] && [[ "$FIRST_HEADER" == *" 1:N:0:"* ]] && [[ "$QUALITY_LINE" == *"I"* ]]; then
             echo "FASTQ format correct: Illumina headers and quality scores present"
+            echo "Files are gzipped as required by QIIME 2"
             RESULT=0
         else
             echo "FASTQ format incorrect"

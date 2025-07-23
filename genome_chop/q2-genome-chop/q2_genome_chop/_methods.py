@@ -16,7 +16,7 @@ def chop_sequences(
     slide_bp: int,
     max_sequences: Optional[int] = None,
     random_seed: Optional[int] = None,
-    compress_output: bool = False
+    sample_name: Optional[str] = None
 ) -> SingleLanePerSampleSingleEndFastqDirFmt:
     """
     Chop genome sequences into overlapping chunks.
@@ -33,13 +33,14 @@ def chop_sequences(
         Maximum number of output sequences to produce
     random_seed : int, optional
         Random seed for reproducible random mode
-    compress_output : bool
-        Whether to compress output files with gzip
+    sample_name : str, optional
+        Custom sample name for output. If not provided, generates descriptive 
+        name based on parameters (e.g., 'sliding_chunks_c100_s50' or 'random_chunks_c150_n500')
         
     Returns
     -------
     SingleLanePerSampleSingleEndFastqDirFmt
-        Chopped sequences in FASTQ format
+        Chopped sequences in FASTQ format (always gzip compressed)
     """
     
     # Set random seed if provided
@@ -52,8 +53,18 @@ def chop_sequences(
     # Read sequences from the FASTA format object
     sequences_dict = _read_fasta(str(sequences))
     
-    # Generate sample ID
-    sample_id = "chopped_sequences"
+    # Generate sample ID - use custom name if provided, otherwise create descriptive name
+    if sample_name:
+        sample_id = sample_name
+    else:
+        # Generate descriptive name based on parameters
+        if slide_bp == 0:
+            # Random mode
+            max_str = str(max_sequences) if max_sequences else 'all'
+            sample_id = f"random_chunks_c{chunk_size}_n{max_str}"
+        else:
+            # Sliding window mode
+            sample_id = f"sliding_chunks_c{chunk_size}_s{slide_bp}"
     
     # Process all sequences in this file
     all_chunks = []
@@ -73,11 +84,12 @@ def chop_sequences(
             all_chunks = all_chunks[:max_sequences]
             break
     
-    # Write FASTQ output - QIIME 2 requires gzipped format
+    # Write FASTQ output - QIIME 2 always requires gzipped format
     output_filename = f"{sample_id}_sequences_L001_R1_001.fastq.gz"
         
     output_path = result.path / output_filename
-    _write_fastq(output_path, all_chunks, sample_id, use_gzip=True)  # Always use gzip for QIIME 2
+    # Note: compress_output parameter is ignored - QIIME 2 format requires gzip
+    _write_fastq(output_path, all_chunks, sample_id, use_gzip=True)
     
     # Create required MANIFEST file for QIIME 2
     manifest_path = result.path / "MANIFEST"
