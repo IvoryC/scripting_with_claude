@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FASTQ Shuffle Verification Tool
+FASTQ Shuffle Verification Tool - fastq_verify.py
 
 Verifies that a FASTQ shuffling tool preserves nucleotide counts by comparing
 original and shuffled files.
@@ -12,6 +12,8 @@ import sys
 import os
 from collections import Counter
 from pathlib import Path
+
+__version__ = "v0.0.17"
 
 
 def parse_fastq(filename):
@@ -72,17 +74,30 @@ def main():
     parser = argparse.ArgumentParser(
         description="Verify FASTQ shuffling tool preserves nucleotide counts"
     )
+    parser.add_argument("-v", "--version", action="version", version=f"fastq_verify.py {__version__}")
     parser.add_argument("original_file", help="Original FASTQ file")
     parser.add_argument("shuffled_file", help="Shuffled FASTQ file")
-    parser.add_argument("num_reads", type=int, help="Number of reads to test")
+    parser.add_argument("-n", "--num_reads", type=int, default=100, help="Number of reads to test (default: 100)")
     parser.add_argument("-o", "--output", help="Output table filename")
+    
+    # Check if no arguments provided and show help
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(2)
     
     args = parser.parse_args()
     
-    # Generate output filename if not provided
+    # Generate output filename if not provided, or use default naming in specified directory
     if args.output is None:
         shuffled_base = Path(args.shuffled_file).stem
         args.output = f"{shuffled_base}_verification_results.tsv"
+    else:
+        # Check if output is a directory
+        output_path = Path(args.output)
+        if output_path.is_dir():
+            shuffled_base = Path(args.shuffled_file).stem
+            default_filename = f"{shuffled_base}_verification_results.tsv"
+            args.output = str(output_path / default_filename)
     
     print(f"Loading original file: {args.original_file}", file=sys.stderr)
     original_reads = parse_fastq(args.original_file)
