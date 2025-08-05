@@ -13,7 +13,7 @@ import os
 from collections import Counter
 from pathlib import Path
 
-__version__ = "v0.0.19"
+__version__ = "v0.0.20"
 
 
 def parse_fastq(filename):
@@ -61,6 +61,11 @@ def count_nucleotides(sequence):
         'N': n_count,
         'other': other_count
     }
+
+
+def has_single_unique_character(sequence):
+    """Check if sequence contains only one unique character"""
+    return len(set(sequence.upper())) == 1
 
 
 def sequences_match_composition(seq1, seq2):
@@ -125,6 +130,9 @@ def main():
     results = []
     passed = 0
     failed = 0
+    identical_sequences = 0
+    not_checked_for_identity = 0
+    checked_and_different = 0
     
     # Test each selected read
     for i, read_name in enumerate(read_names_to_test):
@@ -139,23 +147,44 @@ def main():
             shuffled_seq = "not found"
             original_counts = count_nucleotides(original_seq)
             shuffled_counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0, 'other': 0}
-            pass_fail = "FAIL"
             sequences_identical = "N/A"
+            pass_fail = "FAIL"
             failed += 1
         else:
             shuffled_seq = shuffled_reads[read_name]
             original_counts = count_nucleotides(original_seq)
             shuffled_counts = count_nucleotides(shuffled_seq)
             
-            # Check if sequences are identical
-            sequences_identical = "TRUE" if original_seq == shuffled_seq else "FALSE"
+            # Check for composition match first
+            composition_matches = sequences_match_composition(original_seq, shuffled_seq)
             
-            if sequences_match_composition(original_seq, shuffled_seq):
-                pass_fail = "PASS"
-                passed += 1
+            # Check if sequences are identical, but only if more than one unique character
+            if has_single_unique_character(original_seq):
+                sequences_identical = "N/A"
+                not_checked_for_identity += 1
+                # Don't fail for identity when only one unique character
+                if composition_matches:
+                    pass_fail = "PASS"
+                    passed += 1
+                else:
+                    pass_fail = "FAIL"
+                    failed += 1
             else:
-                pass_fail = "FAIL"
-                failed += 1
+                # Check if sequences are identical
+                if original_seq == shuffled_seq:
+                    sequences_identical = "TRUE"
+                    identical_sequences += 1
+                    pass_fail = "FAIL"  # Identical sequences should fail
+                    failed += 1
+                else:
+                    sequences_identical = "FALSE"
+                    checked_and_different += 1
+                    if composition_matches:
+                        pass_fail = "PASS"
+                        passed += 1
+                    else:
+                        pass_fail = "FAIL"
+                        failed += 1
         
         # Store result
         results.append({
@@ -213,6 +242,15 @@ def main():
     print(f"Total reads tested: {max_reads}", file=sys.stderr)
     print(f"Passed: {passed}", file=sys.stderr)
     print(f"Failed: {failed}", file=sys.stderr)
+    
+    # If there were identical sequences, provide detailed breakdown
+    if identical_sequences > 0:
+        print(f"\n=== IDENTITY CHECK SUMMARY ===", file=sys.stderr)
+        print(f"Reads not checked for identity (single unique character): {not_checked_for_identity}", file=sys.stderr)
+        print(f"Reads found to be identical to original: {identical_sequences}", file=sys.stderr)
+        print(f"Reads checked and found different from original: {checked_and_different}", file=sys.stderr)
+        print(f"NOTE: Identical sequences are considered test failures", file=sys.stderr)
+    
     print(f"Results written to: {args.output}", file=sys.stderr)
     
     # Print pass/fail result to stdout
