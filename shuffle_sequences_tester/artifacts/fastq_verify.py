@@ -13,7 +13,7 @@ import os
 from collections import Counter
 from pathlib import Path
 
-__version__ = "v0.0.17"
+__version__ = "v0.0.19"
 
 
 def parse_fastq(filename):
@@ -140,11 +140,15 @@ def main():
             original_counts = count_nucleotides(original_seq)
             shuffled_counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0, 'other': 0}
             pass_fail = "FAIL"
+            sequences_identical = "N/A"
             failed += 1
         else:
             shuffled_seq = shuffled_reads[read_name]
             original_counts = count_nucleotides(original_seq)
             shuffled_counts = count_nucleotides(shuffled_seq)
+            
+            # Check if sequences are identical
+            sequences_identical = "TRUE" if original_seq == shuffled_seq else "FALSE"
             
             if sequences_match_composition(original_seq, shuffled_seq):
                 pass_fail = "PASS"
@@ -160,6 +164,7 @@ def main():
             'original_counts': original_counts,
             'shuffled_seq': shuffled_seq,
             'shuffled_counts': shuffled_counts,
+            'sequences_identical': sequences_identical,
             'pass_fail': pass_fail
         })
         
@@ -172,6 +177,7 @@ def main():
             print(f"Shuffled sequence: {shuffled_seq}", file=sys.stderr)
             if shuffled_seq != "not found":
                 print(f"Shuffled nucleotide counts: A={shuffled_counts['A']}, C={shuffled_counts['C']}, G={shuffled_counts['G']}, T={shuffled_counts['T']}, N={shuffled_counts['N']}, other={shuffled_counts['other']}", file=sys.stderr)
+                print(f"Sequences identical: {sequences_identical}", file=sys.stderr)
             print(f"Result: {pass_fail}", file=sys.stderr)
             print("=" * 50, file=sys.stderr)
     
@@ -180,7 +186,7 @@ def main():
     with open(args.output, 'w') as f:
         # Write header
         f.write("read_name\toriginal_sequence\tAs.original\tCs.original\tGs.original\tTs.original\tNs.original\tother.original\t")
-        f.write("shuffled_sequence\tAs.shuffled\tCs.shuffled\tGs.shuffled\tTs.shuffled\tNs.shuffled\tother.shuffled\tpass.fail\n")
+        f.write("shuffled_sequence\tAs.shuffled\tCs.shuffled\tGs.shuffled\tTs.shuffled\tNs.shuffled\tother.shuffled\tsequences_identical\tpass.fail\n")
         
         # Write data
         for result in results:
@@ -199,6 +205,7 @@ def main():
             f.write(f"{result['shuffled_counts']['T']}\t")
             f.write(f"{result['shuffled_counts']['N']}\t")
             f.write(f"{result['shuffled_counts']['other']}\t")
+            f.write(f"{result['sequences_identical']}\t")
             f.write(f"{result['pass_fail']}\n")
     
     # Print final summary to stderr
