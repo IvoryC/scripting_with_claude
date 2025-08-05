@@ -37,13 +37,27 @@ def parse_fastq(filename):
 
 
 def count_nucleotides(sequence):
-    """Count A, T, G, C nucleotides in sequence"""
+    """Count A, C, G, T, N, and other nucleotides in sequence"""
     counter = Counter(sequence.upper())
+    
+    # Count standard nucleotides
+    a_count = counter.get('A', 0)
+    c_count = counter.get('C', 0)
+    g_count = counter.get('G', 0)
+    t_count = counter.get('T', 0)
+    n_count = counter.get('N', 0)
+    
+    # Count other characters (anything not A, C, G, T, N)
+    standard_bases = {'A', 'C', 'G', 'T', 'N'}
+    other_count = sum(count for base, count in counter.items() if base not in standard_bases)
+    
     return {
-        'A': counter.get('A', 0),
-        'T': counter.get('T', 0),
-        'G': counter.get('G', 0),
-        'C': counter.get('C', 0)
+        'A': a_count,
+        'C': c_count,
+        'G': g_count,
+        'T': t_count,
+        'N': n_count,
+        'other': other_count
     }
 
 
@@ -109,7 +123,7 @@ def main():
             print(f"WARNING: Read {read_name} not found in shuffled file", file=sys.stderr)
             shuffled_seq = "not found"
             original_counts = count_nucleotides(original_seq)
-            shuffled_counts = {'A': 0, 'T': 0, 'G': 0, 'C': 0}
+            shuffled_counts = {'A': 0, 'C': 0, 'G': 0, 'T': 0, 'N': 0, 'other': 0}
             pass_fail = "FAIL"
             failed += 1
         else:
@@ -139,10 +153,10 @@ def main():
             print("\n=== DETAILED REPORT FOR RANDOMLY SELECTED READ ===", file=sys.stderr)
             print(f"Read name: {read_name}", file=sys.stderr)
             print(f"Original sequence: {original_seq}", file=sys.stderr)
-            print(f"Original nucleotide counts: A={original_counts['A']}, T={original_counts['T']}, G={original_counts['G']}, C={original_counts['C']}", file=sys.stderr)
+            print(f"Original nucleotide counts: A={original_counts['A']}, C={original_counts['C']}, G={original_counts['G']}, T={original_counts['T']}, N={original_counts['N']}, other={original_counts['other']}", file=sys.stderr)
             print(f"Shuffled sequence: {shuffled_seq}", file=sys.stderr)
             if shuffled_seq != "not found":
-                print(f"Shuffled nucleotide counts: A={shuffled_counts['A']}, T={shuffled_counts['T']}, G={shuffled_counts['G']}, C={shuffled_counts['C']}", file=sys.stderr)
+                print(f"Shuffled nucleotide counts: A={shuffled_counts['A']}, C={shuffled_counts['C']}, G={shuffled_counts['G']}, T={shuffled_counts['T']}, N={shuffled_counts['N']}, other={shuffled_counts['other']}", file=sys.stderr)
             print(f"Result: {pass_fail}", file=sys.stderr)
             print("=" * 50, file=sys.stderr)
     
@@ -150,8 +164,8 @@ def main():
     print(f"\nWriting results to: {args.output}", file=sys.stderr)
     with open(args.output, 'w') as f:
         # Write header
-        f.write("read_name\toriginal_sequence\tAs.original\tCs.original\tGs.original\tTs.original\t")
-        f.write("shuffled_sequence\tAs.shuffled\tCs.shuffled\tGs.shuffled\tTs.shuffled\tpass.fail\n")
+        f.write("read_name\toriginal_sequence\tAs.original\tCs.original\tGs.original\tTs.original\tNs.original\tother.original\t")
+        f.write("shuffled_sequence\tAs.shuffled\tCs.shuffled\tGs.shuffled\tTs.shuffled\tNs.shuffled\tother.shuffled\tpass.fail\n")
         
         # Write data
         for result in results:
@@ -161,11 +175,15 @@ def main():
             f.write(f"{result['original_counts']['C']}\t")
             f.write(f"{result['original_counts']['G']}\t")
             f.write(f"{result['original_counts']['T']}\t")
+            f.write(f"{result['original_counts']['N']}\t")
+            f.write(f"{result['original_counts']['other']}\t")
             f.write(f"{result['shuffled_seq']}\t")
             f.write(f"{result['shuffled_counts']['A']}\t")
             f.write(f"{result['shuffled_counts']['C']}\t")
             f.write(f"{result['shuffled_counts']['G']}\t")
             f.write(f"{result['shuffled_counts']['T']}\t")
+            f.write(f"{result['shuffled_counts']['N']}\t")
+            f.write(f"{result['shuffled_counts']['other']}\t")
             f.write(f"{result['pass_fail']}\n")
     
     # Print final summary to stderr
