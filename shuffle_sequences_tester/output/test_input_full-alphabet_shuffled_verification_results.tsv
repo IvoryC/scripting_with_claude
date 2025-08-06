@@ -1,0 +1,6 @@
+read_name	original_sequence	As.original	Cs.original	Gs.original	Ts.original	Ns.original	other.original	shuffled_sequence	As.shuffled	Cs.shuffled	Gs.shuffled	Ts.shuffled	Ns.shuffled	other.shuffled	sequences_identical	pass.fail
+sequence_3	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ	2	2	2	2	2	42	pTVxrWlSiAehERcIqMFzOCbGjLvQoUdaBHyYJfsuDKPnZNgmkwtX	2	2	2	2	2	42	FALSE	PASS
+sequence_4	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ	2	2	2	2	2	42	LSdHmJYhwkyEuzWeOoVXqCtglMNxBDrKARfpjIQaTcUFZGsbvnPi	2	2	2	2	2	42	FALSE	PASS
+sequence_1	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ	2	2	2	2	2	42	YSvgNcenUbwBDCpVTJklytjMEOHiuRKqhsPQdXGaoFLZmWArzxIf	2	2	2	2	2	42	FALSE	PASS
+sequence_2	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ	2	2	2	2	2	42	AnULyvaqVmFJYwRjpdeQBEsKclzhgMkiPWrtouGZIDHTNOCSxXbf	2	2	2	2	2	42	FALSE	PASS
+sequence_5	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ	2	2	2	2	2	42	pZUEVRXNuCxqeDiwFAMTovLHGmKnSIabjJgcylQWrdPBYhfOzkst	2	2	2	2	2	42	FALSE	PASS

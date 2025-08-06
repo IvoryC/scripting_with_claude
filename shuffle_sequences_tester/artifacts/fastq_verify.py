@@ -7,19 +7,37 @@ original and shuffled files.
 """
 
 import argparse
+import gzip
 import random
 import sys
 import os
 from collections import Counter
 from pathlib import Path
 
-__version__ = "v0.0.20"
+__version__ = "v0.0.32"
+
+
+def is_gzipped(filename):
+    """Check if file is gzipped by reading magic number"""
+    try:
+        with open(filename, 'rb') as f:
+            return f.read(2) == b'\x1f\x8b'
+    except:
+        return False
+
+
+def open_file(filename):
+    """Open file, automatically detecting if it's gzipped"""
+    if is_gzipped(filename):
+        return gzip.open(filename, 'rt')
+    else:
+        return open(filename, 'r')
 
 
 def parse_fastq(filename):
-    """Parse FASTQ file and return dictionary of {read_name: sequence}"""
+    """Parse FASTQ file (regular or gzipped) and return dictionary of {read_name: sequence}"""
     reads = {}
-    with open(filename, 'r') as f:
+    with open_file(filename) as f:
         while True:
             header = f.readline().strip()
             if not header:

@@ -5,6 +5,8 @@ INPUT_FILE=${1:-input/test_input_full-alphabet.fastq}
 
 echo "Using input file: $INPUT_FILE"
 
+mkdir temp
+
 # Loop through iterations 1 through 5
 for i in {1..5}; do
     echo "Processing iteration $i..."
